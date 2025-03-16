@@ -26,7 +26,7 @@ const Footer = () => {
           
           <div className="footer-section">
             <h3 className="footer-title">Contact</h3>
-            <p>Email: support@timecapsule.example.com</p>
+            <p>Email: capsumail@gmail.com</p>
           </div>
         </div>
         
