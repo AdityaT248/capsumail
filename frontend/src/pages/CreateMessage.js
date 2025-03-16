@@ -56,7 +56,20 @@ const CreateMessage = () => {
     
     try {
       // Ensure the date is in ISO format with timezone information
+      if (!formData.scheduled_date) {
+        throw new Error('Please select a delivery date');
+      }
+      
+      // Create a Date object from the input value
       const scheduledDate = new Date(formData.scheduled_date);
+      
+      // Check if the date is valid
+      if (isNaN(scheduledDate.getTime())) {
+        throw new Error('Invalid date format');
+      }
+      
+      // Convert to ISO string for the API
+      const isoDate = scheduledDate.toISOString();
       
       if (file) {
         // Create FormData for file upload
@@ -64,14 +77,14 @@ const CreateMessage = () => {
         formDataWithFile.append('recipient_email', formData.recipient_email);
         formDataWithFile.append('subject', formData.subject);
         formDataWithFile.append('content', formData.content);
-        formDataWithFile.append('scheduled_date', scheduledDate.toISOString());
+        formDataWithFile.append('scheduled_date', isoDate);
         formDataWithFile.append('file', file);
         
         await messageApi.createMessageWithAttachment(formDataWithFile);
       } else {
         await messageApi.createMessage({
           ...formData,
-          scheduled_date: scheduledDate.toISOString()
+          scheduled_date: isoDate
         });
       }
       
@@ -81,7 +94,11 @@ const CreateMessage = () => {
       }, 2000);
     } catch (err) {
       console.error("Error creating message:", err);
-      setError(err.response?.data?.detail || 'Failed to schedule message');
+      if (err.message) {
+        setError(err.message);
+      } else {
+        setError(err.response?.data?.detail || 'Failed to schedule message');
+      }
     } finally {
       setLoading(false);
     }
@@ -104,7 +121,7 @@ const CreateMessage = () => {
   return (
     <div className="container">
       <div className="message-form">
-        <h2>Create a Time Capsule Message</h2>
+        <h1>Create a Time Capsule Message</h1>
         <p className="form-intro">
           Write a message to your future self or someone special. This digital time capsule 
           will deliver your thoughts, memories, and attachments at the exact date and time you choose.
@@ -113,7 +130,7 @@ const CreateMessage = () => {
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="card">
           <div className="form-group">
             <label htmlFor="recipient_email">
               <i className="icon">✉️</i> Recipient Email
@@ -126,6 +143,7 @@ const CreateMessage = () => {
               onChange={handleChange}
               required
               placeholder="Who will receive this message?"
+              className="auth-input"
             />
             <small>This can be your own email or someone else's</small>
           </div>
@@ -142,6 +160,7 @@ const CreateMessage = () => {
               onChange={handleChange}
               required
               placeholder="A title for your time capsule"
+              className="auth-input"
             />
           </div>
           
@@ -157,6 +176,7 @@ const CreateMessage = () => {
               rows="6"
               required
               placeholder="Write your thoughts, memories, or a message to your future self..."
+              className="auth-input"
             ></textarea>
             <small>What would you like to say to the future?</small>
           </div>
@@ -173,6 +193,7 @@ const CreateMessage = () => {
               onChange={handleChange}
               required
               min={new Date().toISOString().slice(0, 16)}
+              className="auth-input"
             />
             <small>Choose when your message will be delivered</small>
           </div>
