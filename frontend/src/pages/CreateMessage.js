@@ -91,39 +91,74 @@ const CreateMessage = () => {
       // Convert to ISO string for the API
       const isoDate = scheduledDate.toISOString();
       
+      // Prepare the subject (use default if not provided)
+      const subject = formData.subject || `Time Capsule for ${formData.recipient_name}`;
+      
+      let response;
+      
       if (file) {
         // Create FormData for file upload
         const formDataWithFile = new FormData();
         formDataWithFile.append('recipient_email', formData.recipient_email);
         formDataWithFile.append('recipient_name', formData.recipient_name);
         formDataWithFile.append('sender_name', formData.sender_name);
-        formDataWithFile.append('subject', formData.subject || `Time Capsule for ${formData.recipient_name}`);
+        formDataWithFile.append('subject', subject);
         formDataWithFile.append('content', formData.content);
         formDataWithFile.append('scheduled_date', isoDate);
         formDataWithFile.append('file', file);
         
-        await messageApi.createMessageWithAttachment(formDataWithFile);
+        console.log('Sending form data with attachment');
+        for (let pair of formDataWithFile.entries()) {
+          console.log(pair[0] + ': ' + (pair[0] === 'file' ? pair[1].name : pair[1]));
+        }
+        
+        response = await messageApi.createMessageWithAttachment(formDataWithFile);
       } else {
-        await messageApi.createMessage({
+        // For text-only messages
+        const messageData = {
           recipient_email: formData.recipient_email,
           recipient_name: formData.recipient_name,
           sender_name: formData.sender_name,
-          subject: formData.subject || `Time Capsule for ${formData.recipient_name}`,
+          subject: subject,
           content: formData.content,
           scheduled_date: isoDate
-        });
+        };
+        
+        console.log('Sending message data:', JSON.stringify(messageData, null, 2));
+        response = await messageApi.createMessage(messageData);
       }
       
+      console.log('API Response:', response);
       setSuccess('Message scheduled successfully!');
       setTimeout(() => {
         navigate('/dashboard');
       }, 2000);
     } catch (err) {
       console.error("Error creating message:", err);
+      
       if (err.message) {
         setError(err.message);
-      } else if (err.response && err.response.data) {
-        setError(err.response.data.detail || 'Failed to schedule message');
+      } else if (err.response) {
+        // Handle different error status codes
+        if (err.response.status === 405) {
+          setError('Method not allowed. The API endpoint does not support this operation.');
+          console.error('API endpoint not accepting this request method:', err.response);
+        } else if (err.response.status === 422) {
+          // Validation error from FastAPI
+          const validationErrors = err.response.data?.detail || [];
+          if (Array.isArray(validationErrors) && validationErrors.length > 0) {
+            const errorMessages = validationErrors.map(err => `${err.loc.join('.')} - ${err.msg}`).join('; ');
+            setError(`Validation error: ${errorMessages}`);
+          } else if (typeof err.response.data?.detail === 'string') {
+            setError(err.response.data.detail);
+          } else {
+            setError('Invalid data submitted. Please check your inputs.');
+          }
+        } else if (err.response.data && err.response.data.detail) {
+          setError(err.response.data.detail);
+        } else {
+          setError(`Error (${err.response.status}): Failed to schedule message`);
+        }
       } else {
         setError('Failed to schedule message. Please try again.');
       }
