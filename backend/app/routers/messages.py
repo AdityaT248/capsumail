@@ -44,6 +44,8 @@ async def create_message(
     db_message = Message(
         user_id=current_user.id,
         recipient_email=message.recipient_email,
+        recipient_name=message.recipient_name,
+        sender_name=message.sender_name,
         subject=message.subject,
         content=message.content,
         scheduled_date=scheduled_naive
@@ -65,6 +67,8 @@ async def create_message(
 async def create_message_with_attachment(
     background_tasks: BackgroundTasks,
     recipient_email: str = Form(...),
+    recipient_name: str = Form(...),
+    sender_name: str = Form(...),
     subject: str = Form(...),
     content: str = Form(...),
     scheduled_date: datetime = Form(...),
@@ -87,6 +91,8 @@ async def create_message_with_attachment(
     db_message = Message(
         user_id=current_user.id,
         recipient_email=recipient_email,
+        recipient_name=recipient_name,
+        sender_name=sender_name,
         subject=subject,
         content=content,
         scheduled_date=scheduled_naive

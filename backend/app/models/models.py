@@ -23,6 +23,8 @@ class Message(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
     recipient_email = Column(String, index=True)
+    recipient_name = Column(String)
+    sender_name = Column(String)
     subject = Column(String)
     content = Column(Text)
     scheduled_date = Column(DateTime, index=True)

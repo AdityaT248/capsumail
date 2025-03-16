@@ -22,6 +22,8 @@ class UserResponse(UserBase):
 # Message schemas
 class MessageBase(BaseModel):
     recipient_email: EmailStr
+    recipient_name: str
+    sender_name: str
     subject: str
     content: str
     scheduled_date: datetime
