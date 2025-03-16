@@ -1,0 +1,182 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px 0;
+}
+
+/* Hero section */
+.hero {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+/* Features section */
+.features {
+  padding: 60px 0;
+}
+
+.features h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: var(--primary-color);
+}
+
+.feature-card {
+  text-align: center;
+  padding: 30px;
+}
+
+.feature-card i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+}
+
+.feature-card h3 {
+  margin-bottom: 15px;
+  color: var(--secondary-color);
+}
+
+/* Auth forms */
+.auth-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 30px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.auth-container h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--primary-color);
+}
+
+.auth-footer {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Dashboard */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.message-card {
+  position: relative;
+}
+
+.message-date {
+  color: var(--light-text);
+  margin-bottom: 10px;
+}
+
+.message-actions {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+/* Message form */
+.message-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.message-preview {
+  margin-top: 30px;
+  padding: 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: white;
+}
+
+.countdown {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.2rem;
+}
+
+.countdown span {
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+/* File upload */
+.file-upload {
+  border: 2px dashed var(--border-color);
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.file-upload:hover {
+  border-color: var(--primary-color);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.file-info i {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+/* Message detail */
+.message-detail {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.message-content {
+  white-space: pre-wrap;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.attachment-list {
+  margin-top: 20px;
+}
+
+.attachment-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.attachment-item i {
+  margin-right: 10px;
+  color: var(--primary-color);
+} 
