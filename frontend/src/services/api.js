@@ -38,7 +38,7 @@ const messageApi = {
   // Get all messages
   getMessages: async () => {
     try {
-      const response = await axios.get('/api/messages');
+      const response = await axios.get('/messages');
       return response.data;
     } catch (error) {
       console.error('Error fetching messages:', error);
@@ -49,7 +49,7 @@ const messageApi = {
   // Get a single message
   getMessage: async (id) => {
     try {
-      const response = await axios.get(`/api/messages/${id}`);
+      const response = await axios.get(`/messages/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error fetching message ${id}:`, error);
@@ -60,7 +60,7 @@ const messageApi = {
   // Create a new message
   createMessage: async (messageData) => {
     try {
-      const response = await axios.post('/api/messages', messageData);
+      const response = await axios.post('/messages', messageData);
       return response.data;
     } catch (error) {
       console.error('Error creating message:', error);
@@ -71,7 +71,7 @@ const messageApi = {
   // Create a message with attachment
   createMessageWithAttachment: async (formData) => {
     try {
-      const response = await axios.post('/api/messages/with-attachment', formData, {
+      const response = await axios.post('/messages/with-attachment', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -86,7 +86,7 @@ const messageApi = {
   // Delete a message
   deleteMessage: async (id) => {
     try {
-      const response = await axios.delete(`/api/messages/${id}`);
+      const response = await axios.delete(`/messages/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Error deleting message ${id}:`, error);

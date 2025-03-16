@@ -8,6 +8,8 @@ const CreateMessage = () => {
   const { currentUser } = useAuth();
   const [formData, setFormData] = useState({
     recipient_email: currentUser?.email || '',
+    recipient_name: '',
+    sender_name: currentUser?.name || '',
     subject: '',
     content: '',
     scheduled_date: ''
@@ -55,7 +57,19 @@ const CreateMessage = () => {
     setError('');
     
     try {
-      // Ensure the date is in ISO format with timezone information
+      // Validate required fields
+      if (!formData.recipient_email) {
+        throw new Error('Recipient email is required');
+      }
+      if (!formData.recipient_name) {
+        throw new Error('Recipient name is required');
+      }
+      if (!formData.sender_name) {
+        throw new Error('Sender name is required');
+      }
+      if (!formData.content) {
+        throw new Error('Message content is required');
+      }
       if (!formData.scheduled_date) {
         throw new Error('Please select a delivery date');
       }
@@ -68,6 +82,12 @@ const CreateMessage = () => {
         throw new Error('Invalid date format');
       }
       
+      // Check if date is in the future
+      const now = new Date();
+      if (scheduledDate <= now) {
+        throw new Error('Scheduled date must be in the future');
+      }
+      
       // Convert to ISO string for the API
       const isoDate = scheduledDate.toISOString();
       
@@ -75,7 +95,9 @@ const CreateMessage = () => {
         // Create FormData for file upload
         const formDataWithFile = new FormData();
         formDataWithFile.append('recipient_email', formData.recipient_email);
-        formDataWithFile.append('subject', formData.subject);
+        formDataWithFile.append('recipient_name', formData.recipient_name);
+        formDataWithFile.append('sender_name', formData.sender_name);
+        formDataWithFile.append('subject', formData.subject || `Time Capsule for ${formData.recipient_name}`);
         formDataWithFile.append('content', formData.content);
         formDataWithFile.append('scheduled_date', isoDate);
         formDataWithFile.append('file', file);
@@ -83,7 +105,11 @@ const CreateMessage = () => {
         await messageApi.createMessageWithAttachment(formDataWithFile);
       } else {
         await messageApi.createMessage({
-          ...formData,
+          recipient_email: formData.recipient_email,
+          recipient_name: formData.recipient_name,
+          sender_name: formData.sender_name,
+          subject: formData.subject || `Time Capsule for ${formData.recipient_name}`,
+          content: formData.content,
           scheduled_date: isoDate
         });
       }
@@ -96,8 +122,10 @@ const CreateMessage = () => {
       console.error("Error creating message:", err);
       if (err.message) {
         setError(err.message);
+      } else if (err.response && err.response.data) {
+        setError(err.response.data.detail || 'Failed to schedule message');
       } else {
-        setError(err.response?.data?.detail || 'Failed to schedule message');
+        setError('Failed to schedule message. Please try again.');
       }
     } finally {
       setLoading(false);
@@ -149,8 +177,40 @@ const CreateMessage = () => {
           </div>
           
           <div className="form-group">
+            <label htmlFor="recipient_name">
+              <i className="icon">👤</i> Recipient Name
+            </label>
+            <input
+              type="text"
+              id="recipient_name"
+              name="recipient_name"
+              value={formData.recipient_name}
+              onChange={handleChange}
+              required
+              placeholder="Name of the recipient"
+              className="auth-input"
+            />
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="sender_name">
+              <i className="icon">👤</i> Your Name
+            </label>
+            <input
+              type="text"
+              id="sender_name"
+              name="sender_name"
+              value={formData.sender_name}
+              onChange={handleChange}
+              required
+              placeholder="Your name"
+              className="auth-input"
+            />
+          </div>
+          
+          <div className="form-group">
             <label htmlFor="subject">
-              <i className="icon">📝</i> Subject
+              <i className="icon">📝</i> Subject (Optional)
             </label>
             <input
               type="text"
@@ -158,10 +218,10 @@ const CreateMessage = () => {
               name="subject"
               value={formData.subject}
               onChange={handleChange}
-              required
               placeholder="A title for your time capsule"
               className="auth-input"
             />
+            <small>If left blank, we'll generate a subject for you</small>
           </div>
           
           <div className="form-group">
@@ -240,7 +300,7 @@ const CreateMessage = () => {
           
           <div className="message-preview">
             <div className="preview-header">
-              <h3>{formData.subject || 'Your Time Capsule'}</h3>
+              <h3>{formData.subject || `Time Capsule for ${formData.recipient_name || 'Someone Special'}`}</h3>
               <div className="preview-date">
                 To be opened on: {formData.scheduled_date ? new Date(formData.scheduled_date).toLocaleString() : 'the future'}
               </div>
@@ -253,10 +313,21 @@ const CreateMessage = () => {
                 <i className="attachment-icon">📎</i> {file.name}
               </div>
             )}
+            <div className="preview-footer">
+              <div>To: {formData.recipient_name || 'Recipient'} ({formData.recipient_email || 'email@example.com'})</div>
+              <div>From: {formData.sender_name || 'You'}</div>
+            </div>
           </div>
           
           <button type="submit" className="btn btn-primary submit-btn" disabled={loading}>
-            {loading ? 'Sealing your time capsule...' : 'Seal this time capsule'}
+            {loading ? (
+              <>
+                <span className="loading-spinner"></span>
+                <span>Sealing your time capsule...</span>
+              </>
+            ) : (
+              'Seal this time capsule'
+            )}
           </button>
         </form>
       </div>
