@@ -33,44 +33,67 @@ const Login = () => {
   return (
     <div className="container">
       <div className="auth-container">
-        <h2>Log In</h2>
+        <div className="auth-header">
+          <span className="auth-icon">🔐</span>
+          <h2>Welcome Back</h2>
+          <p className="auth-subtitle">Sign in to access your time capsules</p>
+        </div>
         
-        {error && <div className="error">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">
+              <i className="icon">✉️</i> Email Address
+            </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              placeholder="Enter your email"
+              className="auth-input"
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              <i className="icon">🔒</i> Password
+            </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              placeholder="Enter your password"
+              className="auth-input"
             />
           </div>
           
           <button 
             type="submit" 
-            className="btn btn-primary" 
+            className="btn btn-primary auth-button" 
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Log In'}
+            {loading ? (
+              <>
+                <span className="loading-spinner"></span>
+                <span>Unlocking...</span>
+              </>
+            ) : (
+              'Sign In'
+            )}
           </button>
         </form>
         
         <div className="auth-footer">
-          Don't have an account? <Link to="/register">Sign Up</Link>
+          <p>Don't have an account yet? <Link to="/register" className="auth-link">Create Account</Link></p>
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
+          <Link to="/" className="btn btn-text">Return to Home</Link>
         </div>
       </div>
     </div>

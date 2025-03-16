@@ -4,14 +4,12 @@ import { useAuth } from '../contexts/AuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   
   const { register } = useAuth();
   const navigate = useNavigate();
@@ -27,7 +25,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
       return setError('Passwords do not match');
     }
@@ -36,13 +33,11 @@ const Register = () => {
     setError('');
     
     try {
-      await register(formData.name, formData.email, formData.password);
-      setSuccess('Registration successful! Please check your email for verification.');
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+      await register(formData.email, formData.password);
+      navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to register');
+      setError('Failed to create an account');
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,26 +46,19 @@ const Register = () => {
   return (
     <div className="container">
       <div className="auth-container">
-        <h2>Sign Up</h2>
+        <div className="auth-header">
+          <span className="auth-icon">✨</span>
+          <h2>Create Your Account</h2>
+          <p className="auth-subtitle">Begin your journey through time</p>
+        </div>
         
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
+        {error && <div className="error-message">{error}</div>}
         
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label htmlFor="name">Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
+            <label htmlFor="email">
+              <i className="icon">✉️</i> Email Address
+            </label>
             <input
               type="email"
               id="email"
@@ -78,11 +66,15 @@ const Register = () => {
               value={formData.email}
               onChange={handleChange}
               required
+              placeholder="Enter your email"
+              className="auth-input"
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">
+              <i className="icon">🔒</i> Password
+            </label>
             <input
               type="password"
               id="password"
@@ -90,12 +82,15 @@ const Register = () => {
               value={formData.password}
               onChange={handleChange}
               required
-              minLength="6"
+              placeholder="Create a password"
+              className="auth-input"
             />
           </div>
           
           <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
+            <label htmlFor="confirmPassword">
+              <i className="icon">🔐</i> Confirm Password
+            </label>
             <input
               type="password"
               id="confirmPassword"
@@ -103,17 +98,33 @@ const Register = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               required
-              minLength="6"
+              placeholder="Confirm your password"
+              className="auth-input"
             />
           </div>
           
-          <button type="submit" className="btn btn-primary" disabled={loading}>
-            {loading ? 'Signing Up...' : 'Sign Up'}
+          <button 
+            type="submit" 
+            className="btn btn-primary auth-button" 
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="loading-spinner"></span>
+                <span>Creating Account...</span>
+              </>
+            ) : (
+              'Create Account'
+            )}
           </button>
         </form>
         
         <div className="auth-footer">
-          Already have an account? <Link to="/login">Log In</Link>
+          <p>Already have an account? <Link to="/login" className="auth-link">Sign In</Link></p>
+          <div className="auth-divider">
+            <span>or</span>
+          </div>
+          <Link to="/" className="btn btn-text">Return to Home</Link>
         </div>
       </div>
     </div>

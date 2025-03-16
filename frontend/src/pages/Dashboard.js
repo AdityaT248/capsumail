@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { messageApi } from '../services/api';
-import { format } from 'date-fns';
+import { format, formatDistanceToNow } from 'date-fns';
 
 const Dashboard = () => {
   const [messages, setMessages] = useState([]);
@@ -36,53 +36,98 @@ const Dashboard = () => {
     }
   };
 
+  const getDeliveryStatus = (date) => {
+    const now = new Date();
+    const scheduledDate = new Date(date);
+    
+    if (scheduledDate < now) {
+      return { status: 'delivered', text: 'Delivered' };
+    }
+    
+    const timeLeft = formatDistanceToNow(scheduledDate, { addSuffix: true });
+    return { status: 'pending', text: `Delivery ${timeLeft}` };
+  };
+
   if (loading) {
-    return <div className="loading">Loading messages...</div>;
+    return (
+      <div className="container">
+        <div className="loading-container">
+          <div className="loading-animation">
+            <span className="loading-icon">⏳</span>
+          </div>
+          <p>Loading your time capsules...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="container">
       <div className="dashboard-header">
         <h2>Your Time Capsule Messages</h2>
-        <Link to="/create-message" className="btn btn-primary">Create New Message</Link>
+        <Link to="/create" className="btn btn-primary">
+          <i className="create-icon">✉️</i> Create New Time Capsule
+        </Link>
       </div>
 
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error-message">{error}</div>}
 
       {messages.length === 0 ? (
-        <div className="card">
-          <p>You don't have any scheduled messages yet.</p>
-          <Link to="/create-message" className="btn btn-secondary">Create Your First Message</Link>
+        <div className="empty-state">
+          <div className="empty-icon">📭</div>
+          <h3>No Time Capsules Yet</h3>
+          <p>You haven't created any time capsule messages yet. Send a message to your future self or someone special.</p>
+          <Link to="/create" className="btn btn-primary">Create Your First Time Capsule</Link>
         </div>
       ) : (
         <div className="grid">
-          {messages.map(message => (
-            <div key={message.id} className="card message-card">
-              <h3>{message.subject}</h3>
-              <p className="message-date">
-                Scheduled for: {format(new Date(message.scheduled_date), 'PPP')}
-              </p>
-              <p>
-                To: {message.recipient_email}
-              </p>
-              <p>
-                {message.content.length > 100 
-                  ? `${message.content.substring(0, 100)}...` 
-                  : message.content}
-              </p>
-              <div className="message-actions">
-                <button 
-                  onClick={() => handleDelete(message.id)} 
-                  className="btn btn-danger"
-                >
-                  Delete
-                </button>
+          {messages.map(message => {
+            const deliveryStatus = getDeliveryStatus(message.scheduled_date);
+            
+            return (
+              <div key={message.id} className="message-card">
+                <div className={`status-badge ${deliveryStatus.status}`}>
+                  {deliveryStatus.text}
+                </div>
+                
+                <h3>{message.subject}</h3>
+                
+                <p className="message-date">
+                  {format(new Date(message.scheduled_date), 'PPP')}
+                </p>
+                
+                <p className="message-recipient">
+                  <i className="recipient-icon">👤</i> {message.recipient_email}
+                </p>
+                
+                <div className="message-preview">
+                  {message.content.length > 100 
+                    ? `${message.content.substring(0, 100)}...` 
+                    : message.content}
+                </div>
+                
+                {message.has_attachment && (
+                  <div className="attachment-indicator">
+                    <i className="attachment-icon">📎</i> Has attachment
+                  </div>
+                )}
+                
+                <div className="message-actions">
+                  <button 
+                    onClick={() => handleDelete(message.id)} 
+                    className="btn btn-icon btn-danger"
+                    title="Delete this time capsule"
+                  >
+                    🗑️
+                  </button>
+                </div>
+                
+                <Link to={`/messages/${message.id}`} className="message-link">
+                  View Time Capsule
+                </Link>
               </div>
-              <Link to={`/messages/${message.id}`} className="btn btn-secondary">
-                View Details
-              </Link>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
