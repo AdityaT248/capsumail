@@ -28,7 +28,7 @@ const Header = () => {
                     <Link to="/dashboard" className="nav-link">My Messages</Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/create" className="nav-link">Create Message</Link>
+                    <Link to="/create-message" className="nav-link">Create Message</Link>
                   </li>
                   <li className="nav-item">
                     <button onClick={handleLogout} className="nav-link logout-btn">

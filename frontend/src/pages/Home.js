@@ -17,7 +17,7 @@ const Home = () => {
           {isAuthenticated ? (
             <div className="hero-buttons">
               <Link to="/dashboard" className="btn btn-primary">My Time Capsules</Link>
-              <Link to="/create" className="btn btn-secondary">Create New Capsule</Link>
+              <Link to="/create-message" className="btn btn-secondary">Create New Capsule</Link>
             </div>
           ) : (
             <div className="hero-buttons">

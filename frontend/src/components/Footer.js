@@ -32,6 +32,7 @@ const Footer = () => {
         
         <div className="footer-bottom">
           <p>&copy; {currentYear} TimeCapsule. All rights reserved.</p>
+          <p className="author-credits">Designed & Developed by Aditya Thakkar</p>
         </div>
       </div>
     </footer>

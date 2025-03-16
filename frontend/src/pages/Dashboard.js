@@ -67,7 +67,7 @@ const Dashboard = () => {
     <div className="container">
       <div className="dashboard-header">
         <h2>Your Time Capsule Messages</h2>
-        <Link to="/create" className="btn btn-primary">
+        <Link to="/create-message" className="btn btn-primary">
           <i className="create-icon">✉️</i> Create New Time Capsule
         </Link>
       </div>
@@ -79,7 +79,7 @@ const Dashboard = () => {
           <div className="empty-icon">📭</div>
           <h3>No Time Capsules Yet</h3>
           <p>You haven't created any time capsule messages yet. Send a message to your future self or someone special.</p>
-          <Link to="/create" className="btn btn-primary">Create Your First Time Capsule</Link>
+          <Link to="/create-message" className="btn btn-primary">Create Your First Time Capsule</Link>
         </div>
       ) : (
         <div className="grid">
