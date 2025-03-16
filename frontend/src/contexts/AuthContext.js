@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Configure axios defaults
-  axios.defaults.baseURL = 'http://localhost:8000';
+  axios.defaults.baseURL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8000';
 
   // Check if user is already logged in on mount
   useEffect(() => {
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           // Get current user info
-          const response = await axios.get('/auth/me', {
+          const response = await axios.get('/api/auth/me', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       setError(null);
-      const response = await axios.post('/auth/register', {
+      const response = await axios.post('/api/auth/register', {
         name,
         email,
         password
@@ -74,14 +74,14 @@ export const AuthProvider = ({ children }) => {
       formData.append('username', email);
       formData.append('password', password);
       
-      const response = await axios.post('/auth/token', formData);
+      const response = await axios.post('/api/auth/token', formData);
       
       // Save token to localStorage
       const token = response.data.access_token;
       localStorage.setItem('token', token);
       
       // Get user info
-      const userResponse = await axios.get('/auth/me', {
+      const userResponse = await axios.get('/api/auth/me', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
