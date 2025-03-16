@@ -1,0 +1,1 @@
+cd frontend && npm install && export NODE_OPTIONS=--openssl-legacy-provider && CI=false npm run build && cd .. && mkdir -p backend/static && cp -r frontend/build/* backend/static/ && find backend/static -type f | head -20
