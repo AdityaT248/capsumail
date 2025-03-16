@@ -12,7 +12,7 @@ const Dashboard = () => {
     const fetchMessages = async () => {
       try {
         const data = await messageApi.getMessages();
-        setMessages(data);
+        setMessages(Array.isArray(data) ? data : []);
       } catch (err) {
         setError('Failed to load messages');
         console.error(err);
@@ -61,6 +61,8 @@ const Dashboard = () => {
     );
   }
 
+  const messageList = Array.isArray(messages) ? messages : [];
+
   return (
     <div className="container">
       <div className="dashboard-header">
@@ -72,7 +74,7 @@ const Dashboard = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      {messages.length === 0 ? (
+      {messageList.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">📭</div>
           <h3>No Time Capsules Yet</h3>
@@ -81,7 +83,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <div className="grid">
-          {messages.map(message => {
+          {messageList.map(message => {
             const deliveryStatus = getDeliveryStatus(message.scheduled_date);
             
             return (

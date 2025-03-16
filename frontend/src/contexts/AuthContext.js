@@ -107,6 +107,11 @@ export const AuthProvider = ({ children }) => {
     setCurrentUser(null);
     setIsAuthenticated(false);
     console.log("User logged out");
+    
+    // Force a page reload to clear any state
+    if (process.env.NODE_ENV === 'production') {
+      window.location.href = '/';
+    }
   };
 
   // Context value

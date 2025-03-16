@@ -21,7 +21,13 @@ const Login = () => {
       console.log("Login successful in Login component");
       
       // Navigate directly to dashboard
-      navigate('/dashboard', { replace: true });
+      if (process.env.NODE_ENV === 'production') {
+        // In production, use window.location for a full page reload
+        window.location.href = '/dashboard';
+      } else {
+        // In development, use React Router
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err) {
       setError('Failed to log in. Please check your credentials.');
       console.error("Login error in component:", err);
